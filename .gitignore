@@ -1,0 +1,22 @@
+# JAR files
+*.jar
+
+# VM files
+os_files/**
+
+# Node modules (if any)
+node_modules/
+
+# Build directories
+build/
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Environment files
+.env*
+!env.example
+
+# Git submodules (cloud-conf)
+cloud-conf/
