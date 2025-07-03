@@ -1,0 +1,22 @@
+services:
+    
+  notification-service:
+    restart: 'on-failure'
+    build: .
+    ports:
+      - "8085"
+    volumes:
+      - ./api:/app  
+    networks:
+      - iaas-firecracker-network
+
+networks:
+  iaas-firecracker-network:
+    external: true
+    name: service-config_iaas-firecracker-network  # Replace with actual network name
+
+  
+volumes:
+  .:
+
+    

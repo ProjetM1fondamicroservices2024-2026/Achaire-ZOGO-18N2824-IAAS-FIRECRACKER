@@ -1,0 +1,185 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: firecracker
+      POSTGRES_PASSWORD: fireCracker
+      POSTGRES_DB: firecracker
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - iaas-firecracker-network
+
+  firecracker_db:
+    restart: always
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: firecracker_db
+      MYSQL_ROOT_PASSWORD: firecracker
+      MYSQL_PASSWORD: firecracker
+      MYSQL_USER: firecracker
+    ports:
+      - "13319:3306"
+    volumes:
+      - mysql_data_firecracker:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "firecracker", "-pfirecracker"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    networks:
+      - iaas-firecracker-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "8888:80"
+    depends_on:
+      - postgres
+    networks:
+      - iaas-firecracker-network
+
+### Service PHPMyAdmin ###
+
+  phpmyadmin:
+    restart: always
+    image: phpmyadmin/phpmyadmin:latest
+    environment:
+      PMA_HOST: firecracker_db
+      PMA_USER: firecracker
+      PMA_PASSWORD: firecracker
+    ports:
+      - "7000:80"
+    depends_on:
+      - firecracker_db
+    networks:
+      - iaas-firecracker-network
+
+
+  # mysql_db_service_cluster:
+  #   restart: always
+  #   image: mysql:8.0
+  #   command: --default-authentication-plugin=mysql_native_password
+  #   environment:
+  #     MYSQL_DATABASE: service_cluster_db
+  #     MYSQL_ROOT_PASSWORD: firecracker
+  #     MYSQL_PASSWORD: firecracker
+  #     MYSQL_USER: firecracker
+  #   ports:
+  #     - "13306:3306"
+  #   volumes:
+  #     - mysql_data_service_cluster:/var/lib/mysql
+  #   healthcheck:
+  #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "firecracker", "-pfirecracker"]
+  #     interval: 5s
+  #     timeout: 10s
+  #     retries: 10
+  #   networks:
+  #     - iaas-firecracker-network
+
+  # mysql_db_service_system_image:
+  #   restart: always
+  #   image: mysql:8.0
+  #   command: --default-authentication-plugin=mysql_native_password
+  #   environment:
+  #     MYSQL_DATABASE: service_system_image_db
+  #     MYSQL_ROOT_PASSWORD: firecracker
+  #     MYSQL_PASSWORD: firecracker
+  #     MYSQL_USER: firecracker
+  #   ports:
+  #     - "13309:3306"
+  #   volumes:
+  #     - mysql_data_service_system_image:/var/lib/mysql
+  #   healthcheck:
+  #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "firecracker", "-pfirecracker"]
+  #     interval: 5s
+  #     timeout: 10s
+  #     retries: 10
+  #   networks:
+  #     - iaas-firecracker-network
+
+  # mysql_db_service_vm_host:
+  #   restart: always
+  #   image: mysql:8.0
+  #   command: --default-authentication-plugin=mysql_native_password
+  #   environment:
+  #     MYSQL_DATABASE: service_vm_host_db
+  #     MYSQL_ROOT_PASSWORD: firecracker
+  #     MYSQL_PASSWORD: firecracker
+  #     MYSQL_USER: firecracker
+  #   ports:
+  #     - "13318:3306"
+  #   volumes:
+  #     - mysql_data_service_vm_host:/var/lib/mysql
+  #   healthcheck:
+  #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "firecracker", "-pfirecracker"]
+  #     interval: 5s
+  #     timeout: 10s
+  #     retries: 10
+  #   networks:
+  #     - iaas-firecracker-network
+
+  # mysql_db_service_vm_offer:
+  #   restart: always
+  #   image: mysql:8.0
+  #   command: --default-authentication-plugin=mysql_native_password
+  #   environment:
+  #     MYSQL_DATABASE: service_vm_offer_db
+  #     MYSQL_ROOT_PASSWORD: firecracker
+  #     MYSQL_PASSWORD: firecracker
+  #     MYSQL_USER: firecracker
+  #     MYSQL_CHARSET: utf8mb4
+  #     MYSQL_COLLATION: utf8mb4_unicode_ci
+  #   ports:
+  #     - "13308:3306"
+  #   volumes:
+  #     - mysql_data_service_vm_offer:/var/lib/mysql
+  #   healthcheck:
+  #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "firecracker", "-pfirecracker"]
+  #     interval: 5s
+  #     timeout: 10s
+  #     retries: 10
+  #   networks:
+  #     - iaas-firecracker-network
+  
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" 
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest 
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - iaas-firecracker-network
+
+
+
+volumes:
+  postgres_data:
+  # mysql_data_service_cluster:
+  # mysql_data_service_system_image:
+  # mysql_data_service_vm_host:
+  # mysql_data_service_vm_offer:
+  rabbitmq_data:
+  mysql_data_firecracker:
+
+networks:
+  iaas-firecracker-network:
+    external: true
+    name: service-config_iaas-firecracker-network  # Replace with actual network name

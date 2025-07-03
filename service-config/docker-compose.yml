@@ -1,0 +1,18 @@
+
+services:
+  service-config:
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      - SPRING_APPLICATION_NAME=service-config
+      - SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/IAAS-Firecracker/cloud-conf
+      - SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL=main
+    networks:
+      - iaas-firecracker-network
+
+networks:
+  iaas-firecracker-network:
+    # name: iaas-firecracker-network
+    # driver: bridge
+    # attachable: true

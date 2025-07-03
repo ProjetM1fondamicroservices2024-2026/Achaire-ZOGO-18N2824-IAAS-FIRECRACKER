@@ -1,0 +1,19 @@
+
+services:
+  proxy:
+    build: .
+    ports:
+      - 8079:8079
+    volumes:
+      - ./src:/app
+    environment:
+      - APP_HOST=0.0.0.0
+      - EUREKA_URL=http://service-registry:8761/eureka
+    
+    networks:
+      - iaas-firecracker-network
+
+networks:
+  iaas-firecracker-network:
+    external: true
+    name: service-config_iaas-firecracker-network  # Replace with actual network name

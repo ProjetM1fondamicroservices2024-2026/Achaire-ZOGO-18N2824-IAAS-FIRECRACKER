@@ -1,0 +1,430 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+
+% Configuration de la page
+\geometry{hmargin=2.5cm, vmargin=2.5cm}
+
+% Style des titres
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+
+% En-têtes et pieds de page
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+
+% Configuration des listes
+\lstset{
+    basicstyle=\small\ttfamily,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny,
+    numbersep=5pt,
+    showstringspaces=false,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!40!black},
+    stringstyle=\color{red},
+    language=Python
+}
+
+\begin{document}
+
+% Page de garde
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    {\Huge\bfseries Rapport de Projet\par}
+    {\LARGE Plateforme de Gestion d'Instances de Machines Virtuelles\par}
+    \vspace{3cm}
+    \includegraphics[width=0.4\textwidth]{logo.png}\par
+    \vspace{2cm}
+    {\Large\bfseries Équipe de développement\par}
+    \vspace{0.5cm}
+    \begin{tabular}{ll}
+        ZOGO ABOUMA ZOZIME ACHAIRE & 18N2824 \\
+        Stephane Roylex NKOLO & 21T2588 \\
+        SOKOUDJOU CHENDJOU CHRISTIAN MANUEL & 21T2396 \\
+        MAHAMAT SALEH MAHAMAT & 21T2423 \\
+        MAHAMAT SALEH MAHAMAT & 21T2423 \\
+    \end{tabular}
+    \vfill
+    {\large \today\par}
+\end{titlepage}
+
+% Table des matières
+\tableofcontents
+\newpage
+
+\chapter*{Remerciements}
+Nous tenons à exprimer notre profonde gratitude à l'ensemble des personnes qui ont contribué de près ou de loin à la réalisation de ce projet.\par
+\vspace{0.5cm}
+Nos remerciements s'adressent tout particulièrement à nos encadrants pour leur précieux conseils, leur disponibilité et leur soutien constant tout au long de ce projet.\par
+\vspace{0.5cm}
+Nous remercions également l'ensemble des membres de l'équipe pour leur implication, leur travail acharné et leur esprit d'équipe qui ont été déterminants dans l'aboutissement de ce projet.
+
+\chapter{Introduction}
+\section{Contexte du projet}
+Dans un monde de plus en plus numérique, la virtualisation est devenue un pilier fondamental de l'infrastructure informatique moderne. Les machines virtuelles (VMs) offrent une flexibilité inégalée pour le déploiement d'applications, le test de logiciels et l'optimisation des ressources matérielles. Ce projet s'inscrit dans cette dynamique en proposant une solution complète de gestion d'instances de machines virtuelles.
+
+\section{Objectifs du projet}
+L'objectif principal de ce projet est de développer une plateforme permettant :
+\begin{itemize}
+    \item La création et la gestion simplifiée d'instances de machines virtuelles
+    \item L'allocation dynamique des ressources
+    \item La gestion des images système
+    \item Le déploiement automatisé de configurations
+    \item La surveillance et le suivi des performances
+\end{itemize}
+
+\chapter{Architecture du système}
+\section{Vue d'ensemble}
+Notre solution s'articule autour d'une architecture microservices, avec les composants principaux suivants :
+\begin{itemize}
+    \item Service de gestion des clusters
+    \item Service des images système
+    \item Service des offres de machines virtuelles
+    \item Service hôte des machines virtuelles
+    \item Service de notification
+\end{itemize}
+
+\section{Diagramme d'architecture}
+% Insérer ici le diagramme d'architecture
+\begin{center}
+    [Diagramme d'architecture à insérer]
+\end{center}
+
+\chapter{Description des services}
+\section{Service de gestion des clusters (service-cluster)}
+\subsection{Responsabilités}
+\begin{itemize}
+    \item Gestion des clusters de machines hôtes
+    \item Répartition de charge
+    \item Surveillance de l'état des nœuds
+    \item Gestion des utilisateurs et des permissions
+    \item Orchestration des déploiements
+\end{itemize}
+
+\subsection{Technologies utilisées}
+\begin{itemize}
+    \item Python 3.9+ avec FastAPI
+    \item Base de données MySQL 8.0+
+    \item Service Discovery avec Eureka
+    \item Authentification JWT
+    \item ORM SQLAlchemy
+\end{itemize}
+
+\subsection{Points d'API Clés}
+\begin{verbatim}
+# Créer un nouveau cluster
+POST /api/service-cluster/clusters
+{
+    "name": "cluster-1",
+    "description": "Cluster principal",
+    "region": "eu-west-1"
+}
+
+# Lister les nœuds d'un cluster
+GET /api/service-cluster/clusters/{cluster_id}/nodes
+
+# Vérifier l'état du cluster
+GET /api/service-cluster/health
+\end{verbatim}
+
+\section{Service des images système (service-system-image)}
+\subsection{Responsabilités}
+\begin{itemize}
+    \item Gestion du catalogue d'images système
+    \item Téléchargement et stockage des images
+    \item Validation et vérification d'intégrité
+    \item Gestion des versions d'images
+    \item Conversion entre différents formats d'image
+\end{itemize}
+
+\subsection{Technologies utilisées}
+\begin{itemize}
+    \item Python 3.9+ avec FastAPI
+    \item Stockage objet (S3 compatible)
+    \item Base de données PostgreSQL 13+
+    \item Intégration avec Docker pour la gestion des conteneurs
+    \item Système de cache Redis
+\end{itemize}
+
+\subsection{Points d'API Clés}
+\begin{verbatim}
+# Téléverser une nouvelle image
+POST /api/service-system-image/images
+Content-Type: multipart/form-data
+
+# Lister les images disponibles
+GET /api/service-system-image/images
+
+# Télécharger une image spécifique
+GET /api/service-system-image/images/{image_id}/download
+
+# Vérifier l'intégrité d'une image
+GET /api/service-system-image/images/{image_id}/verify
+\end{verbatim}
+
+\section{Service des offres de machines virtuelles (service-vm-offer)}
+\subsection{Responsabilités}
+\begin{itemize}
+    \item Définition des configurations de VM
+    \item Gestion des modèles de machines virtuelles
+    \item Tarification et quotas
+    \item Gestion des plans d'abonnement
+    \item Suivi de l'utilisation des ressources
+\end{itemize}
+
+\subsection{Technologies utilisées}
+\begin{itemize}
+    \item Python 3.9+ avec FastAPI
+    \item Base de données PostgreSQL 13+
+    \item Cache Redis pour les requêtes fréquentes
+    \item Système de files d'attente pour le traitement asynchrone
+\end{itemize}
+
+\subsection{Points d'API Clés}
+\begin{verbatim}
+# Créer une nouvelle offre de VM
+POST /api/service-vm-offer/offers
+{
+    "name": "small-vm",
+    "cpu_cores": 2,
+    "memory_mb": 4096,
+    "disk_gb": 50,
+    "price_per_hour": 0.05
+}
+
+# Lister les offres disponibles
+GET /api/service-vm-offer/offers
+
+# Mettre à jour les quotas utilisateur
+PUT /api/service-vm-offer/users/{user_id}/quotas
+\end{verbatim}
+
+\section{Service hôte des machines virtuelles (service-vm-host)}
+\subsection{Responsabilités}
+\begin{itemize}
+    \item Exécution des instances de VM via Firecracker
+    \item Gestion complète du cycle de vie des VMs
+    \item Surveillance en temps réel des ressources
+    \item Gestion avancée du réseau et du stockage
+    \item Isolation des ressources entre utilisateurs
+    \item Gestion des snapshots et sauvegardes
+\end{itemize}
+
+\subsection{Technologies clés}
+\begin{itemize}
+    \item Firecracker pour la virtualisation légère
+    \item FastAPI pour l'API REST
+    \item RabbitMQ pour la messagerie asynchrone
+    \item Docker pour l'isolation des conteneurs
+    \item Prometheus pour la surveillance
+    \item Grafana pour la visualisation des métriques
+\end{itemize}
+
+\subsection{Points d'API Clés}
+\begin{verbatim}
+# Créer une nouvelle VM
+POST /api/service-vm-host/vm/create
+{
+    "name": "ma-vm",
+    "image_id": "ubuntu-22.04",
+    "cpu_cores": 2,
+    "memory_mb": 4096,
+    "disk_gb": 50
+}
+
+# Démarrer/Arrêter une VM
+POST /api/service-vm-host/vm/{vm_id}/start
+POST /api/service-vm-host/vm/{vm_id}/stop
+
+# Obtenir les métriques d'une VM
+GET /api/service-vm-host/vm/{vm_id}/metrics
+
+# Prendre un snapshot
+POST /api/service-vm-host/vm/{vm_id}/snapshot
+\end{verbatim}
+
+\chapter{Spécifications techniques}
+\section{Prérequis système}
+\subsection{Exigences matérielles minimales}
+\begin{itemize}
+    \item CPU: 4 cœurs (8+ recommandés)
+    \item RAM: 8 Go (16+ Go recommandés)
+    \item Stockage: 100 Go d'espace disque (SSD recommandé)
+    \item Accès réseau: Interface Ethernet Gigabit
+\end{itemize}
+
+\subsection{Exigences logicielles}
+\begin{itemize}
+    \item Système d'exploitation: Linux (Ubuntu 20.04+ ou équivalent)
+    \item Docker 20.10+ et Docker Compose 1.29+
+    \item Python 3.9+
+    \item MySQL 8.0+ ou PostgreSQL 13+
+    \item Accès root pour la configuration réseau et système
+    \item Privilèges de virtualisation activés (KVM)
+\end{itemize}
+
+\section{Architecture du déploiement}
+\subsection{Composants principaux}
+\begin{itemize}
+    \item \textbf{Load Balancer}: Nginx/Traefik
+    \item \textbf{API Gateway}: FastAPI avec authentification
+    \item \textbf{Base de données}: MySQL/PostgreSQL
+    \item \textbf{Message Broker}: RabbitMQ
+    \item \textbf{Cache}: Redis
+    \item \textbf{Stockage}: Stockage objet S3-compatible
+    \item \textbf{Surveillance}: Prometheus + Grafana
+    \item \textbf{Logging}: ELK Stack (Elasticsearch, Logstash, Kibana)
+\end{itemize}
+
+\section{Installation et déploiement}
+\subsection{Configuration requise}
+\begin{itemize}
+    \item 4 Go de RAM minimum (8 Go recommandés)
+    \item 20 Go d'espace disque disponible
+    \item Accès à Internet pour le téléchargement des dépendances
+\end{itemize}
+
+\subsection{Procédure d'installation}
+1. Cloner le dépôt du projet
+2. Configurer les variables d'environnement
+3. Lancer les conteneurs avec Docker Compose
+4. Vérifier l'état des services
+
+\chapter{Manuel d'utilisation}
+\section{Création d'une machine virtuelle}
+1. Sélectionner une image système
+2. Choisir une configuration
+3. Configurer le réseau
+4. Lancer l'instance
+
+\section{Gestion des ressources}
+\begin{itemize}
+    \item Surveillance de l'utilisation CPU/Mémoire
+    \item Gestion des disques
+    \item Configuration réseau
+\end{itemize}
+
+\chapter{Conclusion et perspectives}
+\section{Bilan du projet}
+Ce projet a permis de mettre en œuvre une solution complète de gestion de machines virtuelles, en mettant l'accent sur la performance, la sécurité et la facilité d'utilisation. L'architecture microservices offre une grande évolutivité et maintenabilité.
+
+\section{Points forts}
+\begin{itemize}
+    \item Architecture modulaire et évolutive
+    \item Haute performance grâce à Firecracker
+    \item Gestion fine des ressources
+    \item Interface d'API RESTful complète
+    \item Surveillance et journalisation avancées
+\end{itemize}
+
+\section{Améliorations possibles}
+\subsection{Court terme}
+\begin{itemize}
+    \item Interface web de gestion
+    \item Support de conteneurs Docker
+    \item API GraphQL en complément de REST
+\end{itemize}
+
+\subsection{Moyen terme}
+\begin{itemize}
+    \item Support de la haute disponibilité
+    \item Réplication géographique
+    \item Auto-scaling automatique
+\end{itemize}
+
+\subsection{Long terme}
+\begin{itemize}
+    \item Intégration avec Kubernetes
+    \item Support du multi-cloud
+    \item IA pour l'optimisation des ressources
+\end{itemize}
+
+\chapter*{Annexes}
+\section{Exemple de fichier docker-compose.yml}
+\begin{lstlisting}[language=yaml]
+version: '3.8'
+
+services:
+  api-gateway:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - service-cluster
+      - service-vm-host
+      - service-system-image
+      - service-vm-offer
+
+  service-cluster:
+    build: ./service-cluster
+    environment:
+      - DB_HOST=db
+      - DB_USER=user
+      - DB_PASSWORD=password
+    depends_on:
+      - db
+      - redis
+
+  # Autres services...
+
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:6
+
+volumes:
+  postgres_data:
+\end{lstlisting}
+
+\section{Exemple de configuration réseau}
+\begin{lstlisting}[language=bash]
+# Configuration réseau pour une VM
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    eth0:
+      addresses: [192.168.1.10/24]
+      gateway4: 192.168.1.1
+      nameservers:
+        addresses: [8.8.8.8, 8.8.4.4]
+\end{lstlisting}
+\addcontentsline{toc}{chapter}{Annexes}
+\section{Glossaire}
+\begin{description}
+    \item[VM] Machine Virtuelle
+    \item[API] Interface de Programmation d'Application
+    \item[CPU] Unité Centrale de Traitement
+    \item[RAM] Mémoire Vive
+\end{description}
+
+\section{Références}
+\begin{itemize}
+    \item Documentation officielle de Firecracker
+    \item Documentation FastAPI
+    \item Documentation Docker
+\end{itemize}
+
+\end{document}

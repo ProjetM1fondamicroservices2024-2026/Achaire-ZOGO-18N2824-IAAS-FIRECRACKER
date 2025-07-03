@@ -1,0 +1,4 @@
+api/static/*
+api/media
+api/*/migrations/*
+.env

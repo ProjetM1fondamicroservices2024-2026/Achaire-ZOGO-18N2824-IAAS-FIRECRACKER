@@ -1,0 +1,64 @@
+services:
+  service-vm-offer:
+    build: .
+    ports:
+      - 5002:5002
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - mysql_db_service_vm_offer
+    networks:
+      - iaas-firecracker-network
+
+### Service VM Offer Database ###
+
+  mysql_db_service_vm_offer:
+    restart: always
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: service_vm_offer_db
+      MYSQL_ROOT_PASSWORD: firecracker
+      MYSQL_PASSWORD: firecracker
+      MYSQL_USER: firecracker
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+    ports:
+      - "13308:3306"
+    volumes:
+      - mysql_data_vm_offer:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "firecracker", "-pfirecracker"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    networks:
+      - iaas-firecracker-network
+
+### Service VM Offer PHPMyAdmin ###
+
+  phpmyadmin:
+    restart: always
+    image: phpmyadmin/phpmyadmin:latest
+    environment:
+      PMA_HOST: mysql_db_service_vm_offer
+      PMA_USER: firecracker
+      PMA_PASSWORD: firecracker
+    ports:
+      - "7002:80"
+    depends_on:
+      - mysql_db_service_vm_offer
+    networks:
+      - iaas-firecracker-network
+
+networks:
+  iaas-firecracker-network:
+    external: true
+    name: service-config_iaas-firecracker-network
+
+volumes:
+  mysql_data_vm_offer:

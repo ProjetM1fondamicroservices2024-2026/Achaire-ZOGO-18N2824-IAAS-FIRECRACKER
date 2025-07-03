@@ -1,0 +1,8 @@
+*/migrations/*
+*/__pycache__/*
+*/static/*
+*/media/*
+app/*/__pycache__
+venv/bin/activate
+*/venv/*
+venv
